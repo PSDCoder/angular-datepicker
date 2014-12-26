@@ -25,6 +25,8 @@
           , dateFormat = attr.dateFormat
           , dateMinLimit = attr.dateMinLimit || undefined
           , dateMaxLimit = attr.dateMaxLimit || undefined
+          , mondayFirst = attr.dateMondayFirst || false
+          , weekDays = mondayFirst ? ['1', '2', '3', '4', '5', '6', '0'] : ['0', '1', '2', '3', '4', '5', '6']
           , date = new Date()
           , isMouseOn = false
           , isMouseOnInput = false
@@ -81,8 +83,7 @@
         $scope.day = Number($filter('date')(date, 'dd')); //01-31 like
         $scope.year = Number($filter('date')(date, 'yyyy'));//2014 like
         $scope.months = datetime.MONTH;
-        $scope.daysInString = ['0', '1', '2', '3', '4', '5', '6'].map(function mappingFunc(el) {
-
+        $scope.daysInString = weekDays.map(function mappingFunc(el) {
           return $filter('date')(new Date(new Date('06/08/2014').valueOf() + A_DAY_IN_MILLISECONDS * el), 'EEE');
         });
 
@@ -290,10 +291,14 @@
 
             $scope.days.push(i);
           }
-          //get previous month days is first day in month is not Sunday
-          if (firstDayMonthNumber !== 0) {
 
-            howManyPreviousDays = firstDayMonthNumber;
+          //get previous month days is first day in month is not Sunday
+          if (firstDayMonthNumber !== (mondayFirst ? 1 : 0)) {
+            if (mondayFirst) {
+              howManyPreviousDays = firstDayMonthNumber === 0 ? 6 : firstDayMonthNumber - 1;
+            } else {
+              howManyPreviousDays = firstDayMonthNumber;
+            }
 
             //get previous month
             if (Number(month) === 1) {
@@ -316,9 +321,13 @@
           }
 
           //get next month days is first day in month is not Sunday
-          if (lastDayMonthNumber < 6) {
+          if (lastDayMonthNumber < (mondayFirst ? 7 : 6)) {
+            if (mondayFirst) {
+              howManyNextDays = howManyNextDays === 0 ? 0 : 7 - lastDayMonthNumber;
+            } else {
+              howManyNextDays = 6 - lastDayMonthNumber;
+            }
 
-            howManyNextDays = 6 - lastDayMonthNumber;
             //get previous month
 
             //return next month days
