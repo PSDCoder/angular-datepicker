@@ -11,7 +11,9 @@
     return {
       'restrict': 'E',
       'scope': {
-        'dateSet': '@'
+        'dateSet': '@',
+        'selectedDate': '=',
+        'selectedDateFormat': '@'
       },
       'link': function linkingFunction($scope, element, attr) {
         //get child input
@@ -344,8 +346,12 @@
         };
 
         $scope.setDatepickerDay = function setDatepickeDay(day) {
-
           $scope.day = Number(day);
+
+          var selectedDate = new Date($scope.year + '/' + $scope.monthNumber + '/' + $scope.day);
+          $scope.selectedDate = $scope.selectedDateFormat ?
+              $filter('date')(selectedDate, $scope.selectedDateFormat) :
+              selectedDate;
           $scope.setInputValue();
           $scope.hideCalendar();
         };

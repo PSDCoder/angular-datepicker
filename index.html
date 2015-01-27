@@ -15,11 +15,14 @@
       date-format="MMMM d, y"
       date-min-limit="2014/09/07"
       date-max-limit="2018/09/07"
+      selected-date="currentDate"
+      selected-date-format="yyyy-MM-dd"
       button-prev='<i class="fa fa-arrow-circle-left"></i>'
       button-next='<i class="fa fa-arrow-circle-right"></i>'>
       <input ng-model="date1" type="text" class="angular-datepicker-input"/>
     </datepicker>
-    Date 1 is: {{date1}}
+    <p>Selected date: {{ currentDate }}</p>
+    <p>Date 1 is: {{ date1 }}</p>
   </div>
   <div class="col5">
     <datepicker>
