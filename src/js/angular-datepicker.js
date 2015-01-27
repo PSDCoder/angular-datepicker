@@ -70,20 +70,25 @@
           '</div>' +
           '</div>';
 
-        $scope.$watch('dateSet', function(value) {
+        function dateSetHandler(value) {
           if (value) {
-            date = new Date(value);
-            $scope.month = $filter('date')(date, 'MMMM');//December-November like
-            $scope.monthNumber = Number($filter('date')(date, 'MM')); // 01-12 like
-            $scope.day = Number($filter('date')(date, 'dd')); //01-31 like
-            $scope.year = Number($filter('date')(date, 'yyyy'));//2014 like
+              date = new Date(value);
           }
+
+          $scope.month = $filter('date')(date, 'MMMM');//December-November like
+          $scope.monthNumber = Number($filter('date')(date, 'MM')); // 01-12 like
+          $scope.day = Number($filter('date')(date, 'dd')); //01-31 like
+          $scope.year = Number($filter('date')(date, 'yyyy'));//2014 like
+        }
+        dateSetHandler();
+
+        $scope.$watch('dateSet', dateSetHandler);
+        $scope.$watch(function () {
+            return [$scope.year, $scope.monthNumber, $scope.day].join('');
+        }, function () {
+            $scope.setInputValue();
         });
 
-        $scope.month = $filter('date')(date, 'MMMM');//December-November like
-        $scope.monthNumber = Number($filter('date')(date, 'MM')); // 01-12 like
-        $scope.day = Number($filter('date')(date, 'dd')); //01-31 like
-        $scope.year = Number($filter('date')(date, 'yyyy'));//2014 like
         $scope.months = datetime.MONTH;
         $scope.daysInString = weekDays.map(function mappingFunc(el) {
           return $filter('date')(new Date(new Date('06/08/2014').valueOf() + A_DAY_IN_MILLISECONDS * el), 'EEE');
@@ -239,8 +244,12 @@
 
           if ($scope.isSelectableMinDate($scope.year + '/' + $scope.monthNumber + '/' + $scope.day)
               && $scope.isSelectableMaxDate($scope.year + '/' + $scope.monthNumber + '/' + $scope.day)) {
+            var modelDate = new Date($scope.year + '/' + $scope.monthNumber + '/' + $scope.day),
+                selectedFormat = $scope.selectedDateFormat;
 
-            var modelDate = new Date($scope.year + '/' + $scope.monthNumber + '/' + $scope.day);
+            if (attr.selectedDate) {
+                $scope.selectedDate = selectedFormat ? $filter('date')(modelDate, selectedFormat) : modelDate;
+            }
 
             if (attr.dateFormat) {
 
@@ -347,11 +356,6 @@
 
         $scope.setDatepickerDay = function setDatepickeDay(day) {
           $scope.day = Number(day);
-
-          var selectedDate = new Date($scope.year + '/' + $scope.monthNumber + '/' + $scope.day);
-          $scope.selectedDate = $scope.selectedDateFormat ?
-              $filter('date')(selectedDate, $scope.selectedDateFormat) :
-              selectedDate;
           $scope.setInputValue();
           $scope.hideCalendar();
         };
